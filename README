@@ -1,0 +1,7 @@
+echo "# CS302-Python-2020-Group13" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/UOA-CS302-2020/CS302-Python-2020-Group13.git
+git push -u origin master
+                
