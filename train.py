@@ -4,16 +4,13 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 from resnet import ResNet18
-import argparse
+
 
 def main():
 # check if GPU is available.
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-    # parser.add_argument('--outf', default='./model/', help='folder to output images and model checkpoints') #输出结果保存路径
-    # parser.add_argument('--net', default='./model/Resnet18.pth', help="path to net (to continue training)")  #恢复训练时的模型路径
-    # args = parser.parse_args()
+
 
 # parameters setting
     EPOCH = 10   #epoch
