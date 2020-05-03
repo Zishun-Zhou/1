@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -6,7 +5,7 @@ import torch.nn.functional as F
 class ResBlock(nn.Module):
     def __init__(self, inchannel, outchannel, stride=1):
         super(ResBlock, self).__init__()
-        self.input = nn.Sequential(
+        self.left = nn.Sequential(
             nn.Conv2d(inchannel, outchannel, kernel_size=3, stride=stride, padding=1, bias=False),
             nn.BatchNorm2d(outchannel),
             nn.ReLU(inplace=True),
