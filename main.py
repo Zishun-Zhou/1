@@ -1,85 +1,86 @@
 from __future__ import print_function
+
 import torch
 import torch.optim as optim
-import torchvision
 from torchvision import datasets, transforms
-from torch.optim.lr_scheduler import StepLR
-from RCNN import Net
-import torch.nn.functional as F
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
-import numpy as np
-from PIL import Image
+from AlexNet import AlexNet
 
 
-# functions to show an image
-def imsave(img):
-    npimg = img.numpy()
-    npimg = (np.transpose(npimg, (1, 2, 0)) * 255).astype(np.uint8)
-    im = Image.fromarray(npimg)
-    im.save("./results/your_file.jpeg")
+def train_test_alexnet(model, device, train_loader, test_loader, optimizer, epoch):
+    #10 classes of pic
+    classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
+    with open("train_acc.txt", "w") as train_f, open("test_acc.txt", "w") as test_f:
+        for epoch in range(1, epoch + 1):
+            model.train()
+            train_loss = 0
+            correct = 0
+            total = 0
+            for batch_idx, (data, target) in enumerate(train_loader):
+                data, target = data.to(device), target.to(device)
+                # zero the parameter gradients
+                optimizer.zero_grad()
+                # forward + backward + optimize
+                output = model(data)
+                criterion = torch.nn.CrossEntropyLoss()
+                loss = criterion(output, target)
+                loss.backward()
+                optimizer.step()
 
-def train_cnn(log_interval, model, device, train_loader, optimizer, epoch):
-    model.train()
+                # print loss rate and accuracy
+                train_loss += loss.item()
+                _, predicted = output.max(1)
+                total += target.size(0)
+                correct += predicted.eq(target).sum().item()
+                # iter_train = batch_idx
+                acc_train = 100. * correct / total
+                print('Training: [epoch:%d, iter:%d] Loss: %.03f | Accurracy: %.3f%% '
+                      % (epoch, (batch_idx + 1 + (epoch - 1) * len(train_loader)), train_loss / (batch_idx + 1),
+                         100. * correct / total))
 
-    for batch_idx, (data, target) in enumerate(train_loader):
-        data, target = data.to(device), target.to(device)
-        # zero the parameter gradients
-        optimizer.zero_grad()
-        # forward + backward + optimize
-        output = model(data)
-        criterion = torch.nn.CrossEntropyLoss()
-        loss = criterion(output, target)
-        loss.backward();
-        optimizer.step()
-        if batch_idx % log_interval == 0:
-            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader), loss.item()))
+                # iter, acc, loss
+                train_f.write('%05d %.3f %.3f' % (
+                (batch_idx + 1 + (epoch - 1) * len(train_loader)), acc_train, train_loss / (batch_idx + 1)))
+                train_f.write('\n')
+                train_f.flush()
 
+            print("Waiting Test!")
 
-def test(model, device, test_loader):
-    model.eval()
-    test_loss = 0
-    correct = 0
-    classes = ('plane', 'car', 'bird', 'cat',
-               'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-    with torch.no_grad():
-        for data, target in test_loader:
-            data, target = data.to(device), target.to(device)
-            output = model(data)
-            test_loss += F.nll_loss(output, target, reduction='sum').item()  # sum up batch loss
-            pred = output.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
-            correct += pred.eq(target.view_as(pred)).sum().item()
+            with torch.no_grad():
+                correct = 0
+                total = 0
+                for batch_idx, (data, target) in enumerate(test_loader):
+                    model.eval()
+                    data, target = data.to(device), target.to(device)
+                    output = model(data)
+                    # get the class which has the highest accuracy
+                    _, predicted = torch.max(output.data, 1)
+                    total += target.size(0)
+                    correct += (predicted == target).sum()
+                    # confusion matrix
+                    pred = torch.max(output, 1)[1]
+                    conf_matrix = confusion_matrix(target, pred)
+                    acc_test = 100. * correct / total
 
-    test_loss /= len(test_loader.dataset)
+                    test_f.write('%05d %.3f' % (epoch, acc_test))
+                    test_f.write('\n')
+                    test_f.flush()
 
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset)))
+                 #plot the confusion matrix
+                if epoch == epoch:
 
-    class_correct = list(0. for i in range(10))
-    class_total = list(0. for i in range(10))
-    with torch.no_grad():
-        for data in test_loader:
-            images, labels = data
-            outputs = model(images)
-            _, predicted = torch.max(outputs, 1)
-            c = (predicted == labels).squeeze()
-            for i in range(4):
-                label = labels[i]
-                class_correct[label] += c[i].item()
-                class_total[label] += 1
+                    ConfusionMatrixDisplay(confusion_matrix=conf_matrix,
+                                           display_labels=classes).plot()
 
-    for i in range(10):
-        print('Accuracy of %5s : %2d %%' % (
-            classes[i], 100 * class_correct[i] / class_total[i]))
+                    plt.show()
+                print('Testing Accuracy：%.3f%%' % (100 * correct / total))
 
 
 def main():
-    epoches = 14
-    gamma = 0.7
-    log_interval = 10
+
+    epoches = 50
     torch.manual_seed(1)
     save_model = True
 
@@ -88,7 +89,6 @@ def main():
     # Use Cuda if you can
     device = torch.device("cuda" if use_cuda else "cpu")
 
-
     ######################3   Torchvision    ###########################3
     # Use data predefined loader
     # Pre-processing by using the transform.Compose
@@ -96,31 +96,32 @@ def main():
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
     train_loader = torch.utils.data.DataLoader(
         datasets.CIFAR10('./data', train=True, download=True,
-                       transform=transforms.Compose([
-                           transforms.ToTensor()
-                       ])),
-        batch_size=4, shuffle=True, **kwargs)
+                         transform=transforms.Compose([
+                             transforms.RandomHorizontalFlip(),
+                             transforms.ToTensor(),
+                             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+                             # the most fit normalization numbers
+                         ])),
+        batch_size=128, shuffle=True, **kwargs)
     test_loader = torch.utils.data.DataLoader(
         datasets.CIFAR10('./data', train=False, transform=transforms.Compose([
-                           transforms.ToTensor()
-                       ])),
-        batch_size=4, shuffle=True, **kwargs)
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        ])),
+        batch_size=100, shuffle=True, **kwargs)
 
     # get some random training images
-    dataiter = iter(train_loader)
-    images, labels = dataiter.next()
-    # img = torchvision.utils.make_grid(images)
-    # imsave(img)
+    #dataiter = iter(train_loader)
+    #images, labels = dataiter.next()
 
     # #####################    Build your network and run   ############################
-    model = Net().to(device)
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(1, epoches + 1):
+    model = AlexNet().to(device)
 
-        train_cnn(log_interval, model, device, train_loader, optimizer, epoch)
-        test(model, device, test_loader)
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.65)
 
+    train_test_alexnet(model, device, train_loader, test_loader, optimizer, epoches)
 
     if save_model:
         torch.save(model.state_dict(), "./cifar_net.pth")
