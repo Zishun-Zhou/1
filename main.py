@@ -80,7 +80,7 @@ def train_test_alexnet(model, device, train_loader, test_loader, optimizer, epoc
 
 def main():
 
-    epoches = 50
+    epoches = 30
     torch.manual_seed(1)
     save_model = True
 
