@@ -34,8 +34,6 @@ class AlexNet(nn.Module):
         )
         self.fc = nn.Sequential(
             nn.Dropout(),
-            #sqrt(524288/batch_size/output_channel)
-            #nn.Linear(256 * 4 * 4, 4096),
             nn.Linear(256 * 3 * 3, 4096),
             nn.ReLU(),
             nn.Dropout(0.5),
