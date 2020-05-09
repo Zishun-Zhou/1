@@ -21,7 +21,7 @@ are decleard in train.py. To obtain evaluations, run the train.py file.
 
 Evaluations
 
-#ResNet: check the confusionMatrix_50epochs.png and learningcurve_50epochs.png files.
+ResNet: check the confusionMatrix_50epochs.png and learningcurve_50epochs.png files.
 
 | CNN           | Accuracy      |
 | ------------- | ------------- |
