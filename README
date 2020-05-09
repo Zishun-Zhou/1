@@ -26,7 +26,7 @@ ResNet: check the confusionMatrix_50epochs.png and learningcurve_50epochs.png fi
 | ------------- | ------------- |
 | ResNet        | Content Cell  |
 | AlexNet       | Content Cell  |
-| VGG11       | Content Cell  |
+| VGG11         | Content Cell  |
 
 Maintainers and contributers:
 Zishun-Zhou
