@@ -1,7 +1,25 @@
-echo "# CS302-Python-2020-Group13" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add origin https://github.com/UOA-CS302-2020/CS302-Python-2020-Group13.git
-git push -u origin master
-                
+Background:
+
+Our project is to implement a image classifier. The framework we used is Convolutional Neural Network. CNN is used to reduce size if images
+are in high resolution. Then fully connected layers will be used to do classification. 
+
+Intall:
+
+To run our project, pytorch package needs to be installed.
+
+Algorithms:
+ResNet: In the resnet.py file, residual block, neural network and shortcut connections are declared. main function and other functions used
+are decleard in train.py. To obtain evaluations, run the train.py file.
+
+
+
+
+Evaluations:
+ResNet: check the confusionMatrix_50epochs.png and learningcurve_50epochs.png files.
+
+
+Maintainers and contributers:
+Zishun-Zhou
+hhuang89
+
+
