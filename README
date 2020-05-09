@@ -8,6 +8,7 @@ Intall:
 To run our project, pytorch package needs to be installed.
 
 Algorithms:
+
 ResNet: In the resnet.py file, residual block, neural network and shortcut connections are declared. main function and other functions used
 are decleard in train.py. To obtain evaluations, run the train.py file.
 
@@ -15,10 +16,12 @@ are decleard in train.py. To obtain evaluations, run the train.py file.
 
 
 Evaluations:
+
 ResNet: check the confusionMatrix_50epochs.png and learningcurve_50epochs.png files.
 
 
 Maintainers and contributers:
+
 Zishun-Zhou
 hhuang89
 
