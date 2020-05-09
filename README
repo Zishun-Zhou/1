@@ -1,5 +1,5 @@
 Background
-===
+
 
 Our project is to implement a image classifier. The framework we used is Convolutional Neural Network. CNN is used to reduce size if images
 are in high resolution. Then fully connected layers will be used to do classification. 
@@ -19,9 +19,9 @@ are decleard in train.py. To obtain evaluations, run the train.py file.
 
 
 
-Evaluations:
+Evaluations
 
-ResNet: check the confusionMatrix_50epochs.png and learningcurve_50epochs.png files.
+#ResNet: check the confusionMatrix_50epochs.png and learningcurve_50epochs.png files.
 
 | CNN           | Accuracy      |
 | ------------- | ------------- |
