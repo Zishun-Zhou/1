@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 import itertools
 import matplotlib.pyplot as plt
-
+import torchvision.transforms as transforms
 
 ########     Testing section     ########
 def testing_savedModel(net,device, testloader, algorithm, classes, ifnormalized, PATH):
@@ -11,7 +11,7 @@ def testing_savedModel(net,device, testloader, algorithm, classes, ifnormalized,
     with torch.no_grad():
         answer = 0
         total = 0
-        conf_matrix = torch.zeros([10, 10], device='cuda')
+        conf_matrix = torch.zeros([10, 10], device=device)
         net.load_state_dict(torch.load(PATH))#load the model
         net.cuda()
         for data in testloader:
@@ -42,7 +42,7 @@ def training(net, device, trainloader, testloader, optimizer, EPOCH, algorithm):
     with open("./DataToPlot/ResNet18_LearningCurve.txt", "a") as f:
         with open("./DataToPlot/AlexNet_LearningCurve.txt", "a") as f1:
             with open("./DataToPlot/LeNet5_LearningCurve.txt", "a") as f2:
-                with open("./DataToPlot/VGG11_LearningCurve.txt", "a") as f3:
+                with open("./DataToPlot/VGG11_LearningCurve.txt.txt", "a") as f3:
                     for epoch in range(0, EPOCH):
                         print('\nEpoch: %d' % (epoch + 1))
                         net.train()
@@ -129,7 +129,7 @@ def LearningCurve_plot(algorithm):
     elif algorithm == 'L':
         filename = './DataToPlot/LeNet5_LearningCurve.txt'
     elif algorithm == 'V':
-        filename = './DataToPlot/VGG11_LearningCurve.txt'
+        filename = './DataToPlot/VGG11_LearningCurve.txt.txt'
 
 
     X, Y, Z = [], [], []
@@ -276,3 +276,36 @@ def save_correspondingMODEL(net,algorithm):
         torch.save(net.state_dict(), "./result/cifar_LeNet5.pth")
     elif algorithm == 'V':
         torch.save(net.state_dict(), "./result/cifar_VGG11.pth")
+
+
+#data transform for vgg11 resize to 64*64
+def transform_vgg():
+    transform_train = transforms.Compose([
+        transforms.RandomHorizontalFlip(),  # to flip some input images to reduce the impact of overfitting
+        transforms.Resize(64),
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        # R,G,B Normalized value: mean and variance
+    ])
+    transform_test = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Resize(64),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+    return transform_train, transform_test
+
+
+def transform():
+    # Data Transform
+    transform_train = transforms.Compose([
+        transforms.RandomCrop(32, padding=4),  # 32*32
+        transforms.RandomHorizontalFlip(),  # to flip some input images to reduce the impact of overfitting
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+        # R,G,B Normalized value: mean and variance
+    ])
+    transform_test = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+    ])
+    return transform_train, transform_test
