@@ -6,7 +6,8 @@ from MODEL.resnet import ResNet18
 from MODEL.AlexNet import AlexNet
 from MODEL.LeNet5 import LeNet_5
 from MODEL.VGG11 import VGG11
-from functions import training,testing_savedModel,LearningCurve_plot,empty_correspondingTXTfile
+from functions import training, testing_savedModel, LearningCurve_plot, empty_correspondingTXTfile, transform_vgg, \
+    transform
 from functions import save_correspondingMODEL
 
 
@@ -19,29 +20,22 @@ def main():
     BATCH_SIZE = 128
     ifnormalized = False # if you want a normalized matrix, set this to be true
 
-    # Data Transform
-    transform_train = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),  #32*32
-        transforms.RandomHorizontalFlip(), #to flip some input images to reduce the impact of overfitting
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)), #R,G,B Normalized value: mean and variance
-    ])
-    transform_test = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-    ])
     # Cifar-10
     classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
     # choose the algorithm to run
     algorithm = input("Select your algorithm: ResNet,AlexNet,LeNet5,VGG11(R/A/L/V) : ").upper()
     if algorithm =='R':
+        transform_train, transform_test = transform()
         net = ResNet18().to(device)
     elif algorithm =='A':
+        transform_train, transform_test = transform()
         net = AlexNet().to(device)
     elif algorithm =='L':
+        transform_train, transform_test = transform()
         net = LeNet_5().to(device)
     elif algorithm =='V':
+        transform_train, transform_test = transform_vgg()
         net = VGG11().to(device)
     else:
         print("Please enter a correct algorithm")
