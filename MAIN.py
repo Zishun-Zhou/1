@@ -1,7 +1,6 @@
 import torch
 import torch.optim as optim
 import torchvision
-import torchvision.transforms as transforms
 from MODEL.resnet import ResNet18
 from MODEL.AlexNet import AlexNet
 from MODEL.LeNet5 import LeNet_5
@@ -63,7 +62,7 @@ def main():
 
         #In the training()function, we test the network each epoch but we don't caluclate the F1-score, Recall
         #and precision. Thoses three parameters will be claculated once the train is finished
-        training(net, device, trainloader, testloader, optimizer, EPOCH, algorithm)
+        training(net, device, trainloader, testloader, optimizer, EPOCH, algorithm,classes)
         # save the selected model
         save_correspondingMODEL(net,algorithm)
     else:
