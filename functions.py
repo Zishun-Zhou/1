@@ -37,12 +37,12 @@ def testing_savedModel(net,device, testloader, algorithm, classes, ifnormalized,
         Precision_Recall_F1(conf_matrix.cpu().numpy(),classes)
 
 ########     Training section     ########
-def training(net, device, trainloader, testloader, optimizer, EPOCH, algorithm):
+def training(net, device, trainloader, testloader, optimizer, EPOCH, algorithm, classes):
     print("Start Training")
     with open("./DataToPlot/ResNet18_LearningCurve.txt", "a") as f:
         with open("./DataToPlot/AlexNet_LearningCurve.txt", "a") as f1:
             with open("./DataToPlot/LeNet5_LearningCurve.txt", "a") as f2:
-                with open("./DataToPlot/VGG11_LearningCurve.txt.txt", "a") as f3:
+                with open("./DataToPlot/VGG11_LearningCurve.txt", "a") as f3:
                     for epoch in range(0, EPOCH):
                         print('\nEpoch: %d' % (epoch + 1))
                         net.train()
@@ -93,11 +93,11 @@ def training(net, device, trainloader, testloader, optimizer, EPOCH, algorithm):
                             f3.write('%03d %.3f %.03f' % ((epoch+1), 100. * correct / total, sum_loss / (i + 1)))
                             f3.write('\n')
                             f3.flush()
-                        print('Training: [epoch:%d] Loss: %.03f | Accurracy: %.3f%% '
-                                % (epoch + 1, sum_loss / length, 100. * correct / total))
 
                     ##### Testing after one epoch is finished training #####
                         print("Waiting Test!")
+                        class_correct = list(0. for i in range(10))
+                        class_total = list(0. for i in range(10))
                         with torch.no_grad():
                             answer = 0
                             total = 0
@@ -112,9 +112,16 @@ def training(net, device, trainloader, testloader, optimizer, EPOCH, algorithm):
 
                                 total += targets.size(0)
                                 answer += (prediction == targets).sum()
+                                c = (prediction == targets).squeeze()
+                                for i in range(4):
+                                    label = targets[i]
+                                    class_correct[label] += c[i].item()
+                                    class_total[label] += 1
+                        print('[EPOCH:%d]: ' % ((epoch + 1)))
+                        for i in range(10):
+                            print('Accuracy of %5s : %2d %%' % (
+                                classes[i], 100 * class_correct[i] / class_total[i]))
 
-
-                            print('[EPOCH:%d]: Testing Accuracy：%.3f%%' % ((epoch+1),(100 * answer / total)))
                     print("Training Finished, Total EPOCH=%d" % EPOCH)
                     f, f1, f2, f3.close()
 
@@ -129,7 +136,7 @@ def LearningCurve_plot(algorithm):
     elif algorithm == 'L':
         filename = './DataToPlot/LeNet5_LearningCurve.txt'
     elif algorithm == 'V':
-        filename = './DataToPlot/VGG11_LearningCurve.txt.txt'
+        filename = './DataToPlot/VGG11_LearningCurve.txt'
 
 
     X, Y, Z = [], [], []
