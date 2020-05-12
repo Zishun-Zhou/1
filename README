@@ -19,6 +19,8 @@ Algorithms:
 
 ResNet18: In the resnet.py, residual block, residual neural network and shortcut connections are defined to use this model.
 LeNet5: Network structure is implemented in LeNet5.py.
+AlexNet: In the AlexNet.py.
+VGG11: The Network is written in VGG11.py.
 
 
 
@@ -26,7 +28,7 @@ Evaluations:
 During training stage, our code will print out the loss and accuracy each iteration. Testing will be enabled when one epoch's training
 is finished and the accuracy will be printed.
 If you want to check confusion matrix and learning curve for one model, you need to run the code again once taining is finished.
-There is a option to test your saved model.
+There is ya option to test our saved model.
 
 
 
