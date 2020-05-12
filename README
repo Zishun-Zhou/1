@@ -1,14 +1,17 @@
-Background
-
+Background:
 
 Our project is to implement a image classifier. The framework we used is Convolutional Neural Network. Convolutional layers are 
 used to map the features of images. Then fully connected layers will be used to do classification. 
 
-All neural networks are in MODEL folder and trained model store in result folder ready to do testing.
+
+Project Structure:
+MAIN.py is used to run our project. All the functions we used are decleared in functions.py.
+All the implementations of neural networks are in MODEL folder and trained models will be stored in result folder.
+
 
 Intall:
 
-To run our project, pytorch package needs to be installed.
+To run our project, pytorch package needs to be installed. Dataset will be automatically downloaded and verified.
 
 
 
