@@ -4,7 +4,7 @@ Background
 Our project is to implement a image classifier. The framework we used is Convolutional Neural Network. Convolutional layers are 
 used to map the features of images. Then fully connected layers will be used to do classification. 
 
-
+All neural networks are in MODEL folder and trained model store in result folder ready to do testing.
 
 Intall:
 
