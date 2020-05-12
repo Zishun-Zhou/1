@@ -1,8 +1,7 @@
 Background
 
 
-Our project is to implement a image classifier. The framework we used is Convolutional Neural Network. CNN is used to reduce size if images
-are in high resolution. Then fully connected layers will be used to do classification. 
+Our project is to implement a image classifier. The framework we used is Convolutional Neural Network. Convolutional layers are used to map the features of images. Then fully connected layers will be used to do classification. 
 
 
 
