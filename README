@@ -7,6 +7,7 @@ used to map the features of images. Then fully connected layers will be used to 
 Project Structure:
 MAIN.py is used to run our project. All the functions we used are decleared in functions.py.
 All the implementations of neural networks are in MODEL folder and trained models will be saved in result folder.
+The dataset we used is CIFAR-10. link: https://www.cs.toronto.edu/~kriz/cifar.html
 
 
 Intall:
